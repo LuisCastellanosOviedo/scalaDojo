@@ -26,12 +26,29 @@ class OptionalTest extends FreeSpec with Matchers {
     tmpDepartment should be(None)
 
     def map2[A, B, C](a: Option[A], b: Option[B])(f: (A, B) => C): Option[C] = {
-      val algo = f(a.get, b.get)
-      if (algo == Nil)
-        None
-      else
-        Some(algo)
+      (a, b) match {
+        case (None, Some(b)) => None
+        case (Some(a), None) => None
+        case (None, None) => None
+        case (Some(a), Some(b)) => try {
+          Some(f(a, b))
+        } catch {
+          case e: Exception => None
+        }
+      }
     }
+
+    map2(Some(2), Some(4))((a, b) => a * b) should be(Some(8))
+    map2(Some(2), Some(0))((a, b) => a / b) should be(None)
+    map2(None, None)((a: Int, b: Int) => a + b) should be(None)
+
+    def calcularImpuesto(a: Int, b: Int): Option[Int] = {
+      val optionA = Some(a)
+      val optionB = Some(b)
+      map2(optionA, optionB)(calcularDeVerdad)
+    }
+
+    def calcularDeVerdad(a: Int, b: Int): Int = a + b
   }
 
 }

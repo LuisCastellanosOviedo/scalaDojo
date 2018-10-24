@@ -75,7 +75,7 @@ class HandlingErrorsWithoutExceptions extends FreeSpec with Matchers{
       if(!a.isDefined || !b.isDefined){
         None
       }else{
-        Some(f(a.get,b.get))
+        Option(f(a.get,b.get))
       }
     }
 
